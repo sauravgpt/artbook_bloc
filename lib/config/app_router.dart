@@ -1,3 +1,4 @@
+import 'package:artbook/screens/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:artbook/screens/screens.dart';
 
@@ -22,6 +23,17 @@ class AppRouter {
       case LoginScreen.routeName:
         return LoginScreen.route();
 
+      case SignupScreen.routeName:
+        return SignupScreen.route();
+
+      default:
+        return _errorRoute();
+    }
+  }
+
+  static Route onGenerateNestesRoute(RouteSettings settings) {
+    print('Nested Route: ${settings.name}');
+    switch (settings.name) {
       default:
         return _errorRoute();
     }
