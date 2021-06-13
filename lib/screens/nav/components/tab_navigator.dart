@@ -1,6 +1,10 @@
+import 'package:artbook/bloc/auth/auth_bloc.dart';
 import 'package:artbook/config/app_router.dart';
 import 'package:artbook/enums/enums.dart';
+import 'package:artbook/repositories/repositories.dart';
+import 'package:artbook/screens/profile/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../screens.dart';
 
@@ -46,7 +50,15 @@ class TabNavigator extends StatelessWidget {
       case BottomNavItem.notification:
         return NotificationScreen();
       case BottomNavItem.profile:
-        return ProfileScreen();
+        return BlocProvider(
+          create: (_) => ProfileBloc(
+            userRepository: context.read<UserRepository>(),
+            authBloc: context.read<AuthBloc>(),
+          )..add(
+              ProfileLoadUser(userId: context.read<AuthBloc>().state.user.uid)),
+          child: ProfileScreen(),
+        );
+
       default:
         return Scaffold();
     }

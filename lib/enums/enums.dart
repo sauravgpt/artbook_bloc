@@ -5,3 +5,5 @@ enum BottomNavItem {
   notification,
   profile,
 }
+
+enum ProfileStatus { initial, loading, loaded, error }

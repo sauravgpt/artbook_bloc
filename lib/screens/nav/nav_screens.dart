@@ -37,30 +37,39 @@ class NavScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.read<BottomNavBarCubit>().state;
-    return Scaffold(
-      body: Stack(
-        children: items
-            .map(
-              (item, _) => MapEntry(
-                  item,
-                  _buildOffStageNavigator(
-                    item,
-                    item == state.selectedItem,
-                  )),
-            )
-            .values
-            .toList(),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        items: items,
-        onTap: (int val) {
-          final selectedItem = BottomNavItem.values[val];
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: BlocBuilder<BottomNavBarCubit, BottomNavBarState>(
+        builder: (context, state) {
+          return Scaffold(
+            body: Stack(
+              children: items
+                  .map(
+                    (item, _) => MapEntry(
+                        item,
+                        _buildOffStageNavigator(
+                          item,
+                          item == state.selectedItem,
+                        )),
+                  )
+                  .values
+                  .toList(),
+            ),
+            bottomNavigationBar: BottomNavBar(
+              items: items,
+              onTap: (int val) {
+                final selectedItem = BottomNavItem.values[val];
 
-          _handleSelectedBottomNavItem(
-              context, selectedItem, selectedItem == state.selectedItem);
+                _handleSelectedBottomNavItem(
+                  context,
+                  selectedItem,
+                  selectedItem == state.selectedItem,
+                );
+              },
+              selectedItem: state.selectedItem,
+            ),
+          );
         },
-        selectedItem: context.watch<BottomNavBarCubit>().state.selectedItem,
       ),
     );
   }
