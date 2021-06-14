@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../screens.dart';
 
 class TabNavigator extends StatelessWidget {
-  static const String tabNavigatorRoute = '/';
+  static const String tabNavigatorRoot = '/';
   final GlobalKey<NavigatorState> navigatorKey;
   final BottomNavItem item;
   const TabNavigator({
@@ -17,17 +17,17 @@ class TabNavigator extends StatelessWidget {
     @required this.navigatorKey,
     @required this.item,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
+    final routeBuilders = _routeBuilder();
     return Navigator(
       key: navigatorKey,
-      initialRoute: tabNavigatorRoute,
+      initialRoute: tabNavigatorRoot,
       onGenerateInitialRoutes: (_, initialRoute) {
         return [
           MaterialPageRoute(
-            settings: RouteSettings(name: tabNavigatorRoute),
-            builder: (context) => _routeBuilder()[initialRoute](context),
+            settings: RouteSettings(name: tabNavigatorRoot),
+            builder: (context) => routeBuilders[initialRoute](context),
           )
         ];
       },
@@ -36,7 +36,7 @@ class TabNavigator extends StatelessWidget {
   }
 
   Map<String, WidgetBuilder> _routeBuilder() {
-    return {tabNavigatorRoute: (context) => _getScreen(context, item)};
+    return {tabNavigatorRoot: (context) => _getScreen(context, item)};
   }
 
   Widget _getScreen(BuildContext context, BottomNavItem item) {
@@ -50,7 +50,7 @@ class TabNavigator extends StatelessWidget {
       case BottomNavItem.notification:
         return NotificationScreen();
       case BottomNavItem.profile:
-        return BlocProvider(
+        return BlocProvider<ProfileBloc>(
           create: (_) => ProfileBloc(
             userRepository: context.read<UserRepository>(),
             authBloc: context.read<AuthBloc>(),

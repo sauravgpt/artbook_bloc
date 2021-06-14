@@ -1,3 +1,4 @@
+import 'package:artbook/screens/screens.dart';
 import 'package:flutter/material.dart';
 
 class ProfileButton extends StatelessWidget {
@@ -11,15 +12,19 @@ class ProfileButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
-      child: Text(
-        isCurrentUser
-            ? 'Edit Profile'
-            : isFollowing
-                ? 'Unfollow'
-                : 'Follow',
-      ),
-    );
+    return isCurrentUser
+        ? ElevatedButton(
+            onPressed: () => Navigator.of(context).pushNamed(
+              EditProfileScreen.routeName,
+              arguments: EditProfileScreenArgs(context: context),
+            ),
+            child: Text('Edit Profile'),
+          )
+        : ElevatedButton(
+            onPressed: () {},
+            child: Text(
+              isFollowing ? 'Unfollow' : 'Follow',
+            ),
+          );
   }
 }
