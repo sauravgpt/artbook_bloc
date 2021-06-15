@@ -78,7 +78,7 @@ class User extends Equatable {
     if (doc == null) return null;
     final map = doc.data();
     return User(
-      id: map['id'] ?? '',
+      id: doc.id,
       username: map['username'] ?? '',
       email: map['email'] ?? '',
       profileImageUrl: map['profileImageUrl'] ?? '',

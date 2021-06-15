@@ -12,6 +12,4 @@ class SimpleBlocObserver extends BlocObserver {
     print(transition);
     super.onTransition(bloc, transition);
   }
-
- 
 }

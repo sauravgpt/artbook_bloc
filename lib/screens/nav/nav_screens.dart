@@ -27,7 +27,7 @@ class NavScreen extends StatelessWidget {
     BottomNavItem.profile: GlobalKey<NavigatorState>(),
   };
 
-  final Map<BottomNavItem, IconData> items = {
+  final Map<BottomNavItem, IconData> items = const {
     BottomNavItem.feed: Icons.home,
     BottomNavItem.search: Icons.search,
     BottomNavItem.create: Icons.add,
@@ -79,7 +79,7 @@ class NavScreen extends StatelessWidget {
     BottomNavItem selectedItem,
     bool isSameItem,
   ) {
-    if (!isSameItem) {
+    if (isSameItem) {
       navigatorKeys[selectedItem]
           .currentState
           .popUntil((route) => route.isFirst);
@@ -87,11 +87,16 @@ class NavScreen extends StatelessWidget {
     context.read<BottomNavBarCubit>().updateSelectedItem(selectedItem);
   }
 
-  Widget _buildOffStageNavigator(BottomNavItem selectItem, bool isSelectItem) {
+  Widget _buildOffStageNavigator(
+    BottomNavItem currentItem,
+    bool isSelectItem,
+  ) {
     return Offstage(
       offstage: !isSelectItem,
       child: TabNavigator(
-          navigatorKey: navigatorKeys[selectItem], item: selectItem),
+        navigatorKey: navigatorKeys[currentItem],
+        item: currentItem,
+      ),
     );
   }
 }
