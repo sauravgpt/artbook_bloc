@@ -11,27 +11,23 @@ class ImageHelper {
     @required CropStyle cropStyle,
     @required String title,
   }) async {
-    try {
-      final pickedFile =
-          await ImagePicker().getImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        final croppedFile = await ImageCropper.cropImage(
-          sourcePath: pickedFile.path,
-          cropStyle: cropStyle,
-          androidUiSettings: AndroidUiSettings(
-            toolbarTitle: title,
-            toolbarColor: Theme.of(context).primaryColor,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false,
-          ),
-          iosUiSettings: const IOSUiSettings(),
-          compressQuality: 70,
-        );
-        return croppedFile;
-      }
-    } catch (e) {
-      return null;
+    final pickedFile =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final croppedFile = await ImageCropper.cropImage(
+        sourcePath: pickedFile.path,
+        cropStyle: cropStyle,
+        androidUiSettings: AndroidUiSettings(
+          toolbarTitle: title,
+          toolbarColor: Theme.of(context).primaryColor,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+        iosUiSettings: const IOSUiSettings(),
+        compressQuality: 70,
+      );
+      return croppedFile;
     }
     return null;
   }
