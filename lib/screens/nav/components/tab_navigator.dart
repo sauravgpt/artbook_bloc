@@ -2,6 +2,7 @@ import 'package:artbook/bloc/auth/auth_bloc.dart';
 import 'package:artbook/config/app_router.dart';
 import 'package:artbook/enums/enums.dart';
 import 'package:artbook/repositories/repositories.dart';
+import 'package:artbook/screens/create_post/cubit/create_post_cubit.dart';
 import 'package:artbook/screens/profile/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,7 +47,14 @@ class TabNavigator extends StatelessWidget {
       case BottomNavItem.search:
         return SearchScreen();
       case BottomNavItem.create:
-        return CreatePostsScreen();
+        return BlocProvider<CreatePostCubit>(
+          create: (context) => CreatePostCubit(
+            authBloc: context.read<AuthBloc>(),
+            postRepository: context.read<PostRepository>(),
+            storageRepository: context.read<StorageRepository>(),
+          ),
+          child: CreatePostsScreen(),
+        );
       case BottomNavItem.notification:
         return NotificationScreen();
       case BottomNavItem.profile:
