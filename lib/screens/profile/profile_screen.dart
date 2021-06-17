@@ -1,6 +1,9 @@
 import 'package:artbook/bloc/auth/auth_bloc.dart';
 import 'package:artbook/enums/enums.dart';
+import 'package:artbook/repositories/repositories.dart';
 import 'package:artbook/widgets/user_profile_image.dart';
+import 'package:artbook/widgets/widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,8 +11,48 @@ import 'bloc/profile_bloc.dart';
 import 'components/profile_info.dart';
 import 'components/profile_stats.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreenArgs {
+  final String userId;
+
+  ProfileScreenArgs({@required this.userId});
+}
+
+class ProfileScreen extends StatefulWidget {
   static const String routeName = '/profile';
+
+  static Route route({@required ProfileScreenArgs args}) {
+    return MaterialPageRoute(
+      settings: RouteSettings(name: routeName),
+      builder: (context) => BlocProvider<ProfileBloc>(
+        create: (_) => ProfileBloc(
+          userRepository: context.read<UserRepository>(),
+          authBloc: context.read<AuthBloc>(),
+          postRepository: context.read<PostRepository>(),
+        )..add(ProfileLoadUser(userId: args.userId)),
+        child: ProfileScreen(),
+      ),
+    );
+  }
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen>
+    with SingleTickerProviderStateMixin {
+  TabController _tabController;
+
+  @override
+  void initState() {
+    _tabController = TabController(length: 2, vsync: this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +82,26 @@ class ProfileScreen extends StatelessWidget {
                 ),
             ],
           ),
-          body: CustomScrollView(
+          body: _buildBody(context, state),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(BuildContext context, ProfileState state) {
+    switch (state.status) {
+      case ProfileStatus.loading:
+        return Center(child: CircularProgressIndicator());
+
+      default:
+        return RefreshIndicator(
+          onRefresh: () async {
+            context
+                .read<ProfileBloc>()
+                .add(ProfileLoadUser(userId: state.user.id));
+            return true;
+          },
+          child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
                 child: Column(
@@ -73,11 +135,57 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-              )
+              ),
+              SliverToBoxAdapter(
+                child: TabBar(
+                  controller: _tabController,
+                  labelColor: Theme.of(context).primaryColor,
+                  unselectedLabelColor: Colors.grey,
+                  tabs: [
+                    Tab(icon: Icon(Icons.grid_on, size: 28)),
+                    Tab(icon: Icon(Icons.list, size: 28)),
+                  ],
+                  indicatorWeight: 3.0,
+                  onTap: (int index) => context
+                      .read<ProfileBloc>()
+                      .add(ProfileToggleGridView(index == 0)),
+                ),
+              ),
+              state.isGridView
+                  ? SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 2.0,
+                        crossAxisSpacing: 2.0,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final post = state.posts[index];
+                          return GestureDetector(
+                            onTap: () {},
+                            child: CachedNetworkImage(
+                              imageUrl: post.imageUrl,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                        childCount: state.posts.length,
+                      ),
+                    )
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final post = state.posts[index];
+                          return PostView(post: post);
+                        },
+                        childCount: state.posts.length,
+                      ),
+                    ),
             ],
           ),
         );
-      },
-    );
+
+        break;
+    }
   }
 }

@@ -2,7 +2,7 @@ part of 'profile_bloc.dart';
 
 class ProfileState extends Equatable {
   final User user;
-  // final List<Post> posts;
+  final List<Post> posts;
   final bool isCurrentUser;
   final bool isGridView;
   final ProfileStatus status;
@@ -11,6 +11,7 @@ class ProfileState extends Equatable {
 
   const ProfileState({
     @required this.user,
+    @required this.posts,
     @required this.isCurrentUser,
     @required this.isGridView,
     @required this.status,
@@ -21,6 +22,7 @@ class ProfileState extends Equatable {
   factory ProfileState.initial() {
     return const ProfileState(
       user: User.empty,
+      posts: [],
       isCurrentUser: false,
       isGridView: true,
       status: ProfileStatus.initial,
@@ -37,10 +39,12 @@ class ProfileState extends Equatable {
         status,
         failure,
         isFollowing,
+        posts,
       ];
 
   ProfileState copyWith({
     User user,
+    List<Post> posts,
     bool isCurrentUser,
     bool isGridView,
     ProfileStatus status,
@@ -54,6 +58,7 @@ class ProfileState extends Equatable {
       status: status ?? this.status,
       failure: failure ?? this.failure,
       isFollowing: isFollowing ?? this.isFollowing,
+      posts: posts ?? this.posts,
     );
   }
 }

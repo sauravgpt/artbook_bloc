@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:artbook/helpers/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,7 +8,6 @@ import 'package:artbook/repositories/repositories.dart';
 import 'package:artbook/screens/edit_profile/cubit/edit_profile_cubit.dart';
 import 'package:artbook/screens/profile/bloc/profile_bloc.dart';
 import 'package:artbook/widgets/user_profile_image.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditProfileScreenArgs {
