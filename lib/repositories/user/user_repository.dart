@@ -24,4 +24,67 @@ class UserRepository extends BaseUserRepository {
         .doc(user.id)
         .update(user.toDocument());
   }
+
+  @override
+  Future<List<User>> searchUsers({@required String query}) async {
+    final userSnap = await _firebaseFirestore
+        .collection(Paths.users)
+        .where('username', isGreaterThanOrEqualTo: query)
+        .get();
+
+    return userSnap.docs.map((doc) => User.fromDocument(doc)).toList();
+  }
+
+  @override
+  void followUser({@required String userId, @required String followUserId}) {
+    // add followUser to user's userfollowing.
+    _firebaseFirestore
+        .collection(Paths.followers)
+        .doc(userId)
+        .collection(Paths.userFollowing)
+        .doc(followUserId)
+        .set({});
+
+    // Add user to followUser's userFollowers
+    _firebaseFirestore
+        .collection(Paths.followers)
+        .doc(followUserId)
+        .collection(Paths.userFollowers)
+        .doc(userId)
+        .set({});
+  }
+
+  @override
+  void unfollowUser(
+      {@required String userId, @required String unfollowUserId}) {
+    // remove unfollowUser from user's following
+    _firebaseFirestore
+        .collection(Paths.following)
+        .doc(userId)
+        .collection(Paths.userFollowing)
+        .doc(unfollowUserId)
+        .delete();
+
+    // remove users from unFollowUser's unfollowers
+    _firebaseFirestore
+        .collection(Paths.followers)
+        .doc(unfollowUserId)
+        .collection(Paths.userFollowers)
+        .doc(userId)
+        .delete();
+  }
+
+  @override
+  Future<bool> isFollowing(
+      {@required String userId, @required String otherUserId}) async {
+    // Is otherUser in user's userFollowing?
+    final otherUserDoc = await _firebaseFirestore
+        .collection(Paths.following)
+        .doc(userId)
+        .collection(Paths.following)
+        .doc(otherUserId)
+        .get();
+
+    return otherUserDoc.exists;
+  }
 }

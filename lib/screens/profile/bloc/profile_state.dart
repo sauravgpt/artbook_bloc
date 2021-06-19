@@ -49,7 +49,7 @@ class ProfileState extends Equatable {
     bool isGridView,
     ProfileStatus status,
     Failure failure,
-    int isFollowing,
+    bool isFollowing,
   }) {
     return ProfileState(
       user: user ?? this.user,

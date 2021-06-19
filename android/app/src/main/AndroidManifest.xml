@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sauravgupta.artbook">
+    <uses-permission android:name="android.permission.INTERNET" /> 
    <application
         android:label="artbook"
         android:icon="@mipmap/ic_launcher">

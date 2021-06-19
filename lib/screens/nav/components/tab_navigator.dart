@@ -4,6 +4,7 @@ import 'package:artbook/enums/enums.dart';
 import 'package:artbook/repositories/repositories.dart';
 import 'package:artbook/screens/create_post/cubit/create_post_cubit.dart';
 import 'package:artbook/screens/profile/bloc/profile_bloc.dart';
+import 'package:artbook/screens/search/cubit/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -44,8 +45,15 @@ class TabNavigator extends StatelessWidget {
     switch (item) {
       case BottomNavItem.feed:
         return FeedScreen();
+
       case BottomNavItem.search:
-        return SearchScreen();
+        return BlocProvider<SearchCubit>(
+          create: (context) => SearchCubit(
+            userRepository: context.read<UserRepository>(),
+          ),
+          child: SearchScreen(),
+        );
+
       case BottomNavItem.create:
         return BlocProvider<CreatePostCubit>(
           create: (context) => CreatePostCubit(
@@ -55,8 +63,10 @@ class TabNavigator extends StatelessWidget {
           ),
           child: CreatePostsScreen(),
         );
+
       case BottomNavItem.notification:
         return NotificationScreen();
+
       case BottomNavItem.profile:
         return BlocProvider<ProfileBloc>(
           create: (_) => ProfileBloc(
